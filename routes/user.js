@@ -1,17 +1,35 @@
-const express = require('express');
-const userControllers = require('../controllers/user');
+const express = require("express");
+
+const userController = require("../controllers/user");
 const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post('/register', userControllers.userRegister);
-router.post('/login', userControllers.userLogin);
-router.post('/logout', userControllers.userLogout);
-router.post('/forgot-password', userControllers.forgotPassword);
+router.post("/register", userController.userRegistration);
+
+router.post("/login", userController.userLogin);
+
+router.post("/logout", userController.userLogout);
+
+router.post(
+  "/wishlist",
+  authMiddleware(["admin", "seller", "buyer"]),
+  userController.addProductToWishlist
+);
+
+router.get(
+  "/wishlist",
+  authMiddleware(["seller", "buyer", "admin"]),
+  userController.getUserWishlist
+);
+
+router.post(
+  "/address",
+  authMiddleware(["seller", "buyer", "admin"]),
+  userController.saveUserAddress
+);
+router.post('/forgot-password', userController.forgotPassword);
 // Add the email parameter to the reset-password route
-router.post('/reset-password/:email', userControllers.resetPassword);
-// router.post('/change-password', authMiddleware(["buyer","seller","buyer"]), userControllers.changePassword);
-
-
+router.post('/reset-password/:email', userController.resetPassword);
 
 module.exports = router;
