@@ -15,6 +15,15 @@ const CartModel = require("../models/cart");
 const CouponModel = require("../models/coupon");
 
 const createOrder = async (req, res) => {
+  /**
+   * 1. Extract user cart by user Id
+   * 2. Get Cart Total and Apply coupon (if available) => payableAmount
+   * 3. Check the mode of payment (If COD, skip payment else Redirect user to payment gateway)
+   * 4. Check the delivery address (if given in body use it else fetch it from user's saved address)
+   * 5. Delete the user cart on successful order
+   * 6. Inventory / Stock values to be updated
+   */
+
   const userCart = await CartModel.findOne({ userId: req.user._id });
   if (!userCart) {
     return res.status(400).json({
@@ -31,6 +40,11 @@ const createOrder = async (req, res) => {
       message: "Invalid coupon code",
     });
   }
+
+  /**
+   * 1. Is coupon between start and end date of the coupon
+   * startDate < currentDate && endDate > currentDate
+   */
   const couponStartDate = dayjs(coupon.startDate);
   const couponEndDate = dayjs(coupon.endDate);
   const currentDateTime = dayjs();
@@ -62,6 +76,7 @@ const createOrder = async (req, res) => {
   }
 
   const deliveryDate = dayjs().add(7, "day");
+  //Order Status Values => PALCED, PACKED, SHIPPED, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, RETURNED, REFUND_AWAITED, REFUND_INITATED, REFUND_RECEIVED
   const orderDetails = {
     cart: userCart,
     userId: req.user._id,
@@ -77,14 +92,14 @@ const createOrder = async (req, res) => {
   const newOrder = await OrderModel.create(orderDetails);
   let pgResponse;
   if (req.body.modeOfPayment === "COD") {
-    
+    // Don't generate transaction ID and don't redirect to payment gateway
   } else {
     // TODO : Redirec the user to payment gateway
     const options = {
-      amount: amount * 100, 
+      amount: amount * 100, // Amount in paisa E.g 50Rs = 5000
       currency: "INR",
-      receipt: newOrder._id, 
-      payment_capture: 1, 
+      receipt: newOrder._id, // Unique Ordre ID
+      payment_capture: 1, // Ignore
     };
     console.log("OPITONS", options);
     try {

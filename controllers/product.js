@@ -25,7 +25,7 @@ const editProduct = async (req, res) => {
 
 const likeDislikeController = async (req, res) => {
   console.log(req.user);
- 
+  // ProductModel.update({_id: },{ $set: {} });
 
   let updateObject = {
     $push: { likes: req.user._id },
