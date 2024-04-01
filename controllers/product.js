@@ -25,7 +25,6 @@ const editProduct = async (req, res) => {
 
 const likeDislikeController = async (req, res) => {
   console.log(req.user);
-  // ProductModel.update({_id: },{ $set: {} });
 
   let updateObject = {
     $push: { likes: req.user._id },
@@ -65,24 +64,12 @@ const productDetailsController = async (req, res) => {
 
 const reviewProductController = async (req, res) => {
   try {
-    /**
-     * 1. productId : URL param
-     * 2. rating, comment : Request body
-     * 3. userId: auth middleware
-     */
-
     const product = await ProductModel.findById(req.params.productId);
     const review = product.reviews.find(
       (review) => review.userId.toString() === req.user._id.toString()
     );
 
     if (review) {
-      // Update review
-      /**
-       * 1. Find the sub document
-       * 2. Update the sub document
-       */
-
       const findObject = {
         reviews: {
           $elemMatch: {
@@ -122,11 +109,7 @@ const reviewProductController = async (req, res) => {
         }
       );
     }
-    // console.log(product);
-    // return;
-
-    // console.log(updatedRecord);
-
+    
     res.json({
       success: true,
       message: "Product review saved successfully",

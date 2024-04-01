@@ -66,7 +66,6 @@ const userLogout = async (req, res) => {
 };
 
 const addProductToWishlist = async (req, res) => {
-  // console.log()
   const updateObject = {
     $push: {
       wishlist: req.body.productId,

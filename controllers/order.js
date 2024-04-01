@@ -15,15 +15,6 @@ const CartModel = require("../models/cart");
 const CouponModel = require("../models/coupon");
 
 const createOrder = async (req, res) => {
-  /**
-   * 1. Extract user cart by user Id
-   * 2. Get Cart Total and Apply coupon (if available) => payableAmount
-   * 3. Check the mode of payment (If COD, skip payment else Redirect user to payment gateway)
-   * 4. Check the delivery address (if given in body use it else fetch it from user's saved address)
-   * 5. Delete the user cart on successful order
-   * 6. Inventory / Stock values to be updated
-   */
-
   const userCart = await CartModel.findOne({ userId: req.user._id });
   if (!userCart) {
     return res.status(400).json({
