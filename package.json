@@ -11,7 +11,7 @@
     "apis",
     "ecomm"
   ],
-  "author": "divyansh",
+  "author": "Namisha",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
